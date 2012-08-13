@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AFIncrementalStore"
-  s.version      = "0.0.1"
+  s.version      = "0.0.1.1"
   s.summary      = "Core Data Persistence with AFNetworking, Done Right"
   s.homepage     = "https://github.com/AFNetworking/AFIncrementalStore"
 
