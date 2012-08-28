@@ -248,7 +248,7 @@ static NSString * const kAFIncrementalStoreResourceIdentifierAttributeName = @"_
                 fetchRequest = [fetchRequest copy];
                 fetchRequest.entity = [NSEntityDescription entityForName:fetchRequest.entityName inManagedObjectContext:backingContext];
                 fetchRequest.resultType = NSDictionaryResultType;
-                fetchRequest.propertiesToFetch = @[ kAFIncrementalStoreResourceIdentifierAttributeName ];
+                fetchRequest.propertiesToFetch = [NSArray arrayWithObject:kAFIncrementalStoreResourceIdentifierAttributeName];
                 results = [backingContext executeFetchRequest:fetchRequest error:error];
                 NSMutableArray *mutableObjects = [NSMutableArray arrayWithCapacity:[results count]];
                 for (NSString *resourceIdentifier in [results valueForKeyPath:kAFIncrementalStoreResourceIdentifierAttributeName]) {
@@ -269,7 +269,7 @@ static NSString * const kAFIncrementalStoreResourceIdentifierAttributeName = @"_
     } else {
         switch (persistentStoreRequest.requestType) {
             case NSSaveRequestType:
-                return @[];
+                return [NSArray array];
             default:
                 goto _error;
         }
