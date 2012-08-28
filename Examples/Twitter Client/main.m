@@ -1,4 +1,4 @@
-// SongsIncrementalStore.m
+// main.m
 //
 // Copyright (c) 2012 Mattt Thompson (http://mattt.me)
 // 
@@ -20,25 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "SongsIncrementalStore.h"
-#import "SongAPIClient.h"
+#import <UIKit/UIKit.h>
 
-@implementation SongsIncrementalStore
+#import "AppDelegate.h"
 
-+ (void)initialize {
-    [NSPersistentStoreCoordinator registerStoreClass:self forStoreType:[self type]];
+int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
 }
-
-+ (NSString *)type {
-    return @"SongsIncrementalStore";
-}
-
-+ (NSManagedObjectModel *)model {
-    return [[NSManagedObjectModel alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"IncrementalStoreExample" withExtension:@"xcdatamodeld"]];
-}
-
-- (id<AFIncrementalStoreHTTPClient>)HTTPClient {
-    return [SongAPIClient sharedClient];
-}
-
-@end

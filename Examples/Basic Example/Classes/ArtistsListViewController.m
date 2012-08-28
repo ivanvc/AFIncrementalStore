@@ -20,15 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#import <CoreData/CoreData.h>
 #import "ArtistsListViewController.h"
 #import "ArtistDetailViewController.h"
 
 #import "Artist.h"
 
-@implementation ArtistsListViewController {
+@interface ArtistsListViewController () <NSFetchedResultsControllerDelegate> {
     NSFetchedResultsController *_fetchedResultsController;
 }
+- (void)refetchData;
+@end
 
+@implementation ArtistsListViewController
+
+- (void)refetchData {
+    _fetchedResultsController.fetchRequest.resultType = NSManagedObjectResultType;
+    [_fetchedResultsController performFetch:nil];
+}
 
 #pragma mark - UIViewController
 
@@ -45,27 +54,7 @@
     _fetchedResultsController.delegate = self;
     [_fetchedResultsController performFetch:nil];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:_fetchedResultsController action:@selector(performFetch:)];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-	[super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-	[super viewDidDisappear:animated];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refetchData)];
 }
 
 #pragma mark - UITableViewDataSource
@@ -98,16 +87,12 @@
     Artist *artist = (Artist *)[_fetchedResultsController objectAtIndexPath:indexPath];
     ArtistDetailViewController *viewController = [[ArtistDetailViewController alloc] initWithArtist:artist];
     [self.navigationController pushViewController:viewController animated:YES];
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate
 
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {    
     [self.tableView reloadData];
 }
-
-
-
 
 @end

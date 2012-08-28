@@ -1,4 +1,4 @@
-// ArtistDetailViewController.h
+// SongAPIClient.h
 //
 // Copyright (c) 2012 Mattt Thompson (http://mattt.me)
 // 
@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import <CoreData/CoreData.h>
+#import "AFRESTClient.h"
+#import "AFIncrementalStore.h"
 
-@class Artist;
+@interface TwitterAPIClient : AFRESTClient <AFIncrementalStoreHTTPClient>
 
-@interface ArtistDetailViewController : UITableViewController <NSFetchedResultsControllerDelegate>
-
-- (id)initWithArtist:(Artist *)artist;
++ (TwitterAPIClient *)sharedClient;
 
 @end

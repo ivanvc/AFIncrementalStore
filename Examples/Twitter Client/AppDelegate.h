@@ -1,4 +1,4 @@
-// ArtistsListViewController.h
+// AppDelegate.h
 //
 // Copyright (c) 2012 Mattt Thompson (http://mattt.me)
 // 
@@ -21,8 +21,16 @@
 // THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
-#import <CoreData/CoreData.h>
 
-@interface ArtistsListViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) UINavigationController *navigationController;
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+- (void)saveContext;
+- (NSURL *)applicationDocumentsDirectory;
 
 @end

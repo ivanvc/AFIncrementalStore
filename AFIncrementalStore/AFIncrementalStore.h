@@ -25,16 +25,37 @@
 
 extern NSString * AFIncrementalStoreUnimplementedMethodException;
 
+@protocol AFIncrementalStoreDelegate;
+@protocol AFIncrementalStoreHTTPClient;
+
+@interface AFIncrementalStore : NSIncrementalStore
+
+@property (nonatomic, strong) AFHTTPClient <AFIncrementalStoreHTTPClient> *HTTPClient;
+@property (readonly) NSPersistentStoreCoordinator *backingPersistentStoreCoordinator;
+
++ (NSString *)type;
+
++ (NSManagedObjectModel *)model;
+
+@end
+
+#pragma mark -
+
 @protocol AFIncrementalStoreHTTPClient <NSObject>
 
 - (id)representationOrArrayOfRepresentationsFromResponseObject:(id)responseObject;
 
-- (NSString *)resourceIdentifierForRepresentation:(NSDictionary *)representation
-                                         ofEntity:(NSEntityDescription *)entity;
+- (NSDictionary *)representationsForRelationshipsFromRepresentation:(NSDictionary *)representation
+                                                           ofEntity:(NSEntityDescription *)entity
+                                                       fromResponse:(NSHTTPURLResponse *)response;
 
-- (NSDictionary *)propertyValuesForRepresentation:(NSDictionary *)representation
+- (NSString *)resourceIdentifierForRepresentation:(NSDictionary *)representation
                                          ofEntity:(NSEntityDescription *)entity
                                      fromResponse:(NSHTTPURLResponse *)response;
+
+- (NSDictionary *)attributesForRepresentation:(NSDictionary *)representation
+                                     ofEntity:(NSEntityDescription *)entity
+                                 fromResponse:(NSHTTPURLResponse *)response;
 
 - (NSURLRequest *)requestForFetchRequest:(NSFetchRequest *)fetchRequest
                              withContext:(NSManagedObjectContext *)context;
@@ -50,27 +71,11 @@ extern NSString * AFIncrementalStoreUnimplementedMethodException;
 
 @optional
 
-- (BOOL)shouldRequestPathForObjectWithID:(NSManagedObjectID *)objectID
-                             withContext:(NSManagedObjectContext *)context;
+- (BOOL)shouldFetchRemoteAttributeValuesForObjectWithID:(NSManagedObjectID *)objectID
+                                 inManagedObjectContext:(NSManagedObjectContext *)context;
 
-- (BOOL)shouldRequestPathForObjectWithID:(NSManagedObjectID *)objectID 
-                         forRelationship:(NSRelationshipDescription *)relationship
-                             withContext:(NSManagedObjectContext *)context;
-
-@optional
-
-
-
-@end
-
-#pragma mark -
-
-@interface AFIncrementalStore : NSIncrementalStore
-
-@property (nonatomic, strong) AFHTTPClient <AFIncrementalStoreHTTPClient> *HTTPClient;
-
-+ (NSString *)type;
-
-+ (NSManagedObjectModel *)model;
+- (BOOL)shouldFetchRemoteValuesForRelationship:(NSRelationshipDescription *)relationship
+                               forObjectWithID:(NSManagedObjectID *)objectID
+                        inManagedObjectContext:(NSManagedObjectContext *)context;
 
 @end

@@ -21,8 +21,8 @@
 // THE SOFTWARE.
 
 #import "AppDelegate.h"
-#import "SongsIncrementalStore.h"
-#import "ArtistsListViewController.h"
+#import "TwitterIncrementalStore.h"
+#import "PublicTimelineViewController.h"
 
 @implementation AppDelegate
 @synthesize window = _window;
@@ -35,9 +35,10 @@
     NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:8 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
     [NSURLCache setSharedURLCache:URLCache];
     
-    ArtistsListViewController *viewController = [[ArtistsListViewController alloc] initWithStyle:UITableViewStylePlain];
+    PublicTimelineViewController *viewController = [[PublicTimelineViewController alloc] initWithStyle:UITableViewStylePlain];
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    
+    self.navigationController.navigationBar.tintColor = [UIColor darkGrayColor];
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window addSubview:self.navigationController.view];
     [self.window makeKeyAndVisible];
@@ -88,7 +89,7 @@
         return __managedObjectModel;
     }
     
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"IncrementalStoreExample" withExtension:@"momd"];
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Twitter" withExtension:@"momd"];
     __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     
     return __managedObjectModel;
@@ -101,17 +102,25 @@
         return __persistentStoreCoordinator;
     }
     
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"IncrementalStoreExample.sqlite"];
+    __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    
+    AFIncrementalStore *incrementalStore = (AFIncrementalStore *)[__persistentStoreCoordinator addPersistentStoreWithType:[TwitterIncrementalStore type] configuration:nil URL:nil options:nil error:nil];
+    
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Twitter.sqlite"];
+    
+    NSDictionary *options = @{
+        NSInferMappingModelAutomaticallyOption : @(YES),
+        NSMigratePersistentStoresAutomaticallyOption: @(YES)
+    };
     
     NSError *error = nil;
-    __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+    if (![incrementalStore.backingPersistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
-    }    
-
-    [__persistentStoreCoordinator addPersistentStoreWithType:[SongsIncrementalStore type] configuration:nil URL:nil options:nil error:nil];
-
+    }
+    
+    NSLog(@"SQLite URL: %@", [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Twitter.sqlite"]);
+    
     return __persistentStoreCoordinator;
 }
 
